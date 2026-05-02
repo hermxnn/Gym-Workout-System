@@ -1,190 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Gym Appointment System</title>
+import csv
+import os
 
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-  }
+FILE = "appointments.csv"
+APPOINTMENTS_LIST = []
 
-  h1 {
-    text-align: center;
-  }
+if os.path.exists(FILE):
+    with open(FILE, newline="") as f:
+        reader = csv.reader(f)
+        for row in reader:
+            APPOINTMENTS_LIST.append(row)
 
-  .container {
-    max-width: 700px;
-    margin: auto;
-  }
+email = input("Email: ")
+first = input("First Name: ")
+last = input("Last Name: ")
+phone = input("Mobile Number: ")
+address = input("Address: ")
+dob = input("Date of Birth: ")
+gender = input("Gender: ")
 
-  .card {
-    background: white;
-    padding: 15px;
-    margin-top: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
+date = input("Workout Date (YYYY-MM-DD): ")
+time = input("Enter any time (ex: 3:15 PM): ")
+trainer = input("Select Trainer: ")
 
-  input {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-  }
+if not email or not first or not last or not phone or not date or not time:
+    print("Error: Missing required fields")
+    exit()
 
-  button {
-    padding: 10px;
-    margin-top: 10px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-  }
+if "@" not in email or "." not in email:
+    print("Error: Invalid email")
+    exit()
 
-  .book {
-    background: green;
-    color: white;
-    width: 100%;
-  }
+for appt in APPOINTMENTS_LIST:
+    if appt[1] == first and appt[2] == last:
+        print("Error: This person already has a booking")
+        exit()
 
-  .delete {
-    background: red;
-    color: white;
-  }
+for appt in APPOINTMENTS_LIST:
+    if (appt[7] == date and appt[8] == time and appt[9] == trainer) or \
+       (appt[0] == email and appt[7] == date and appt[8] == time):
+        print("Conflict: Time slot already booked")
+        exit()
 
-  .export {
-    background: black;
-    color: white;
-    width: 100%;
-  }
+new_appt = [email, first, last, phone, address, dob, gender, date, time, trainer]
 
-  .appointment {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
-  }
-</style>
-</head>
+with open(FILE, "a", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(new_appt)
 
-<body>
-
-<h1>Gym Appointment Booking System</h1>
-
-<div class="container">
-
-  <div class="card">
-    <input id="firstName" placeholder="First Name">
-    <input id="lastName" placeholder="Last Name">
-    <input id="email" placeholder="Email">
-    <input id="phone" placeholder="Phone Number">
-    <input id="time" placeholder="Any Time (ex: 6:30 PM or 18:30)">
-
-    <button class="book" onclick="bookAppointment()">Book Appointment</button>
-  </div>
-
-  <div class="card">
-    <button class="export" onclick="exportCSV()">Export CSV</button>
-  </div>
-
-  <div class="card">
-    <h3>Appointments</h3>
-    <div id="list"></div>
-  </div>
-
-</div>
-
-<script>
-let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
-
-function save() {
-  localStorage.setItem("appointments", JSON.stringify(appointments));
-  render();
-}
-
-function fullName(a) {
-  return (a.firstName + " " + a.lastName).toLowerCase();
-}
-
-function bookAppointment() {
-  let firstName = document.getElementById("firstName").value.trim();
-  let lastName = document.getElementById("lastName").value.trim();
-  let email = document.getElementById("email").value.trim();
-  let phone = document.getElementById("phone").value.trim();
-  let time = document.getElementById("time").value.trim();
-
-  if (!firstName || !lastName || !email || !phone || !time) {
-    alert("Fill out all fields");
-    return;
-  }
-
-  let exists = appointments.some(a =>
-    fullName(a) === (firstName + " " + lastName).toLowerCase()
-  );
-
-  if (exists) {
-    alert("You already have an appointment under this name");
-    return;
-  }
-
-  appointments.push({ firstName, lastName, email, phone, time });
-  save();
-
-  document.getElementById("firstName").value = "";
-  document.getElementById("lastName").value = "";
-  document.getElementById("email").value = "";
-  document.getElementById("phone").value = "";
-  document.getElementById("time").value = "";
-}
-
-function deleteAppointment(index) {
-  appointments.splice(index, 1);
-  save();
-}
-
-function exportCSV() {
-  let csv = "First Name,Last Name,Email,Phone,Time\n";
-
-  appointments.forEach(a => {
-    csv += `${a.firstName},${a.lastName},${a.email},${a.phone},${a.time}\n`;
-  });
-
-  let blob = new Blob([csv], { type: "text/csv" });
-  let url = URL.createObjectURL(blob);
-
-  let a = document.createElement("a");
-  a.href = url;
-  a.download = "appointments.csv";
-  a.click();
-}
-
-function render() {
-  let list = document.getElementById("list");
-  list.innerHTML = "";
-
-  if (appointments.length === 0) {
-    list.innerHTML = "<p>No appointments yet</p>";
-    return;
-  }
-
-  appointments.forEach((a, i) => {
-    list.innerHTML += `
-      <div class="appointment">
-        <div>
-          <b>${a.firstName} ${a.lastName}</b><br/>
-          ${a.time} | ${a.phone}
-        </div>
-        <button class="delete" onclick="deleteAppointment(${i})">X</button>
-      </div>
-    `;
-  });
-}
-
-render();
-</script>
-
-</body>
-</html>
+print("Workout booked successfully!")
