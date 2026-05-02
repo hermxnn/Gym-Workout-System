@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gym Appointment System</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  .container {
+    max-width: 700px;
+    margin: auto;
+  }
+
+  .card {
+    background: white;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+  }
+
+  button {
+    padding: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+  }
+
+  .book {
+    background: green;
+    color: white;
+    width: 100%;
+  }
+
+  .delete {
+    background: red;
+    color: white;
+  }
+
+  .export {
+    background: black;
+    color: white;
+    width: 100%;
+  }
+
+  .appointment {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Gym Appointment Booking System</h1>
+
+<div class="container">
+
+  <div class="card">
+    <input id="firstName" placeholder="First Name">
+    <input id="lastName" placeholder="Last Name">
+    <input id="email" placeholder="Email">
+    <input id="phone" placeholder="Phone Number">
+    <input id="time" placeholder="Any Time (ex: 6:30 PM or 18:30)">
+
+    <button class="book" onclick="bookAppointment()">Book Appointment</button>
+  </div>
+
+  <div class="card">
+    <button class="export" onclick="exportCSV()">Export CSV</button>
+  </div>
+
+  <div class="card">
+    <h3>Appointments</h3>
+    <div id="list"></div>
+  </div>
+
+</div>
+
+<script>
+let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+
+function save() {
+  localStorage.setItem("appointments", JSON.stringify(appointments));
+  render();
+}
+
+function fullName(a) {
+  return (a.firstName + " " + a.lastName).toLowerCase();
+}
+
+function bookAppointment() {
+  let firstName = document.getElementById("firstName").value.trim();
+  let lastName = document.getElementById("lastName").value.trim();
+  let email = document.getElementById("email").value.trim();
+  let phone = document.getElementById("phone").value.trim();
+  let time = document.getElementById("time").value.trim();
+
+  if (!firstName || !lastName || !email || !phone || !time) {
+    alert("Fill out all fields");
+    return;
+  }
+
+  let exists = appointments.some(a =>
+    fullName(a) === (firstName + " " + lastName).toLowerCase()
+  );
+
+  if (exists) {
+    alert("You already have an appointment under this name");
+    return;
+  }
+
+  appointments.push({ firstName, lastName, email, phone, time });
+  save();
+
+  document.getElementById("firstName").value = "";
+  document.getElementById("lastName").value = "";
+  document.getElementById("email").value = "";
+  document.getElementById("phone").value = "";
+  document.getElementById("time").value = "";
+}
+
+function deleteAppointment(index) {
+  appointments.splice(index, 1);
+  save();
+}
+
+function exportCSV() {
+  let csv = "First Name,Last Name,Email,Phone,Time\n";
+
+  appointments.forEach(a => {
+    csv += `${a.firstName},${a.lastName},${a.email},${a.phone},${a.time}\n`;
+  });
+
+  let blob = new Blob([csv], { type: "text/csv" });
+  let url = URL.createObjectURL(blob);
+
+  let a = document.createElement("a");
+  a.href = url;
+  a.download = "appointments.csv";
+  a.click();
+}
+
+function render() {
+  let list = document.getElementById("list");
+  list.innerHTML = "";
+
+  if (appointments.length === 0) {
+    list.innerHTML = "<p>No appointments yet</p>";
+    return;
+  }
+
+  appointments.forEach((a, i) => {
+    list.innerHTML += `
+      <div class="appointment">
+        <div>
+          <b>${a.firstName} ${a.lastName}</b><br/>
+          ${a.time} | ${a.phone}
+        </div>
+        <button class="delete" onclick="deleteAppointment(${i})">X</button>
+      </div>
+    `;
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>
