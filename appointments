@@ -1,50 +1,66 @@
-import csv
-import os
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gym Booking System</title>
+</head>
+<body>
 
-FILE = "appointments.csv"
-APPOINTMENTS_LIST = []
+<h2>Workout Booking System</h2>
 
-if os.path.exists(FILE):
-    with open(FILE, newline="") as f:
-        reader = csv.reader(f)
-        for row in reader:
-            APPOINTMENTS_LIST.append(row)
+<input id="email" placeholder="Email"><br>
+<input id="first" placeholder="First Name"><br>
+<input id="last" placeholder="Last Name"><br>
+<input id="phone" placeholder="Phone"><br>
+<input id="date" placeholder="Date (YYYY-MM-DD)"><br>
+<input id="time" placeholder="Time (ex: 3:15 PM)"><br>
+<input id="trainer" placeholder="Trainer"><br>
 
-email = input("Email: ")
-first = input("First Name: ")
-last = input("Last Name: ")
-phone = input("Mobile Number: ")
-address = input("Address: ")
-dob = input("Date of Birth: ")
-gender = input("Gender: ")
+<button onclick="book()">Book Workout</button>
 
-date = input("Workout Date (YYYY-MM-DD): ")
-time = input("Enter any time (ex: 3:15 PM): ")
-trainer = input("Select Trainer: ")
+<p id="msg"></p>
 
-if not email or not first or not last or not phone or not date or not time:
-    print("Error: Missing required fields")
-    exit()
+<script>
+let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
 
-if "@" not in email or "." not in email:
-    print("Error: Invalid email")
-    exit()
+function book() {
+  let email = document.getElementById("email").value.trim();
+  let first = document.getElementById("first").value.trim();
+  let last = document.getElementById("last").value.trim();
+  let phone = document.getElementById("phone").value.trim();
+  let date = document.getElementById("date").value.trim();
+  let time = document.getElementById("time").value.trim();
+  let trainer = document.getElementById("trainer").value.trim();
 
-for appt in APPOINTMENTS_LIST:
-    if appt[1] == first and appt[2] == last:
-        print("Error: This person already has a booking")
-        exit()
+  if (!email || !first || !last || !phone || !date || !time) {
+    return show("Missing required fields");
+  }
 
-for appt in APPOINTMENTS_LIST:
-    if (appt[7] == date and appt[8] == time and appt[9] == trainer) or \
-       (appt[0] == email and appt[7] == date and appt[8] == time):
-        print("Conflict: Time slot already booked")
-        exit()
+  if (!email.includes("@")) {
+    return show("Invalid email");
+  }
 
-new_appt = [email, first, last, phone, address, dob, gender, date, time, trainer]
+  // duplicate person check
+  if (appointments.some(a => a.first === first && a.last === last)) {
+    return show("This person already has a booking");
+  }
 
-with open(FILE, "a", newline="") as f:
-    writer = csv.writer(f)
-    writer.writerow(new_appt)
+  // time conflict check
+  if (appointments.some(a =>
+    a.date === date && a.time === time && a.trainer === trainer
+  )) {
+    return show("Time slot already booked");
+  }
 
-print("Workout booked successfully!")
+  appointments.push({ email, first, last, phone, date, time, trainer });
+  localStorage.setItem("appointments", JSON.stringify(appointments));
+
+  show("Workout booked successfully!");
+}
+
+function show(msg) {
+  document.getElementById("msg").innerText = msg;
+}
+</script>
+
+</body>
+</html>
