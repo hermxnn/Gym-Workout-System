@@ -1,0 +1,50 @@
+import csv
+import os
+
+FILE = "appointments.csv"
+APPOINTMENTS_LIST = []
+
+if os.path.exists(FILE):
+    with open(FILE, newline="") as f:
+        reader = csv.reader(f)
+        for row in reader:
+            APPOINTMENTS_LIST.append(row)
+
+email = input("Email: ")
+first = input("First Name: ")
+last = input("Last Name: ")
+phone = input("Mobile Number: ")
+address = input("Address: ")
+dob = input("Date of Birth: ")
+gender = input("Gender: ")
+
+date = input("Workout Date (YYYY-MM-DD): ")
+time = input("Enter any time (ex: 3:15 PM): ")
+trainer = input("Select Trainer: ")
+
+if not email or not first or not last or not phone or not date or not time:
+    print("Error: Missing required fields")
+    exit()
+
+if "@" not in email or "." not in email:
+    print("Error: Invalid email")
+    exit()
+
+for appt in APPOINTMENTS_LIST:
+    if appt[1] == first and appt[2] == last:
+        print("Error: This person already has a booking")
+        exit()
+
+for appt in APPOINTMENTS_LIST:
+    if (appt[7] == date and appt[8] == time and appt[9] == trainer) or \
+       (appt[0] == email and appt[7] == date and appt[8] == time):
+        print("Conflict: Time slot already booked")
+        exit()
+
+new_appt = [email, first, last, phone, address, dob, gender, date, time, trainer]
+
+with open(FILE, "a", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(new_appt)
+
+print("Workout booked successfully!")
