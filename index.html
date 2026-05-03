@@ -1,60 +1,175 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Gym Booking System</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IronPulse Gym Booking</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  background: radial-gradient(circle at top, #111827, #000000);
+  color: white;
+  overflow-x: hidden;
+}
+
+header {
+  text-align: center;
+  padding: 30px 10px;
+  font-family: 'Anton', sans-serif;
+  font-size: 40px;
+  letter-spacing: 2px;
+  color: #00ff88;
+  text-shadow: 0 0 20px #00ff88;
+}
+
+.subtitle {
+  text-align: center;
+  margin-top: -10px;
+  opacity: 0.7;
+}
+
+.container {
+  max-width: 650px;
+  margin: 30px auto;
+  background: rgba(255,255,255,0.05);
+  padding: 25px;
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 0 30px rgba(0,255,136,0.2);
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  outline: none;
+  transition: 0.2s;
+}
+
+input:focus {
+  box-shadow: 0 0 10px #00ff88;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #00ff88, #00c853);
+  color: black;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 20px #00ff88;
+}
+
+#msg {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.glow-line {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ff88, transparent);
+  margin: 15px 0;
+  animation: glowMove 2s infinite linear;
+}
+
+@keyframes glowMove {
+  from {transform: translateX(-100%);}
+  to {transform: translateX(100%);}
+}
+
+</style>
 </head>
+
 <body>
 
-<h2>Workout Booking System</h2>
+<header>IRONPULSE GYM</header>
+<div class="subtitle">Book your workout. Build your power.</div>
 
-<input id="email" placeholder="Email"><br>
-<input id="first" placeholder="First Name"><br>
-<input id="last" placeholder="Last Name"><br>
-<input id="phone" placeholder="Phone"><br>
-<input id="date" placeholder="Date"><br>
-<input id="time" placeholder="Time"><br>
-<input id="trainer" placeholder="Trainer"><br>
+<div class="container">
 
-<button onclick="book()">Book Workout</button>
+  <div class="glow-line"></div>
 
-<p id="msg"></p>
+  <input id="email" placeholder="Email">
+  <input id="first" placeholder="First Name">
+  <input id="last" placeholder="Last Name">
+  <input id="phone" placeholder="Phone Number">
+  <input id="date" placeholder="Workout Date (YYYY-MM-DD)">
+  <input id="time" placeholder="Time (e.g. 5:30 PM)">
+  <input id="trainer" placeholder="Trainer">
+
+  <button onclick="book()">🔥 Book Workout</button>
+
+  <div id="msg"></div>
+</div>
 
 <script>
 let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
 
 function book() {
-  let email = email = document.getElementById("email").value;
-  let first = document.getElementById("first").value;
-  let last = document.getElementById("last").value;
-  let phone = document.getElementById("phone").value;
-  let date = document.getElementById("date").value;
-  let time = document.getElementById("time").value;
-  let trainer = document.getElementById("trainer").value;
+  let email = document.getElementById("email").value.trim();
+  let first = document.getElementById("first").value.trim();
+  let last = document.getElementById("last").value.trim();
+  let phone = document.getElementById("phone").value.trim();
+  let date = document.getElementById("date").value.trim();
+  let time = document.getElementById("time").value.trim();
+  let trainer = document.getElementById("trainer").value.trim();
+  let msg = document.getElementById("msg");
 
-  if (!email || !first || !last || !phone || !date || !time) {
-    document.getElementById("msg").innerText = "Missing fields";
+  if (!email || !first || !last || !phone || !date || !time || !trainer) {
+    msg.innerText = "⚠ Fill out all fields";
+    msg.style.color = "orange";
     return;
   }
 
   if (!email.includes("@")) {
-    document.getElementById("msg").innerText = "Invalid email";
+    msg.innerText = "⚠ Invalid email";
+    msg.style.color = "red";
     return;
   }
 
   if (appointments.some(a => a.first === first && a.last === last)) {
-    document.getElementById("msg").innerText = "Already booked";
+    msg.innerText = "⚠ Already booked under this name";
+    msg.style.color = "red";
     return;
   }
 
   if (appointments.some(a => a.date === date && a.time === time && a.trainer === trainer)) {
-    document.getElementById("msg").innerText = "Time already taken";
+    msg.innerText = "⚠ Time slot already taken";
+    msg.style.color = "red";
     return;
   }
 
   appointments.push({ email, first, last, phone, date, time, trainer });
   localStorage.setItem("appointments", JSON.stringify(appointments));
 
-  document.getElementById("msg").innerText = "Booked successfully!";
+  msg.innerText = "✅ Workout Booked Successfully!";
+  msg.style.color = "#00ff88";
+
+  document.querySelectorAll("input").forEach(i => i.value = "");
 }
 </script>
 
