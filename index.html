@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gym Booking System</title>
+</head>
+<body>
+
+<h2>Workout Booking System</h2>
+
+<input id="email" placeholder="Email"><br>
+<input id="first" placeholder="First Name"><br>
+<input id="last" placeholder="Last Name"><br>
+<input id="phone" placeholder="Phone"><br>
+<input id="date" placeholder="Date"><br>
+<input id="time" placeholder="Time"><br>
+<input id="trainer" placeholder="Trainer"><br>
+
+<button onclick="book()">Book Workout</button>
+
+<p id="msg"></p>
+
+<script>
+let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+
+function book() {
+  let email = email = document.getElementById("email").value;
+  let first = document.getElementById("first").value;
+  let last = document.getElementById("last").value;
+  let phone = document.getElementById("phone").value;
+  let date = document.getElementById("date").value;
+  let time = document.getElementById("time").value;
+  let trainer = document.getElementById("trainer").value;
+
+  if (!email || !first || !last || !phone || !date || !time) {
+    document.getElementById("msg").innerText = "Missing fields";
+    return;
+  }
+
+  if (!email.includes("@")) {
+    document.getElementById("msg").innerText = "Invalid email";
+    return;
+  }
+
+  if (appointments.some(a => a.first === first && a.last === last)) {
+    document.getElementById("msg").innerText = "Already booked";
+    return;
+  }
+
+  if (appointments.some(a => a.date === date && a.time === time && a.trainer === trainer)) {
+    document.getElementById("msg").innerText = "Time already taken";
+    return;
+  }
+
+  appointments.push({ email, first, last, phone, date, time, trainer });
+  localStorage.setItem("appointments", JSON.stringify(appointments));
+
+  document.getElementById("msg").innerText = "Booked successfully!";
+}
+</script>
+
+</body>
+</html>
