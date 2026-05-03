@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IronPulse Gym Booking</title>
+<title>Grambling Tigers Workout Palace</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
 
@@ -11,25 +11,38 @@
 body {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
-  background: radial-gradient(circle at top, #111827, #000000);
+  background: radial-gradient(circle at top, #000000, #0b0b0b);
   color: white;
-  overflow-x: hidden;
 }
 
 header {
   text-align: center;
-  padding: 30px 10px;
+  padding: 25px 10px;
   font-family: 'Anton', sans-serif;
-  font-size: 40px;
+  font-size: 42px;
   letter-spacing: 2px;
-  color: #00ff88;
-  text-shadow: 0 0 20px #00ff88;
+  color: #ffcc00;
+  text-shadow: 0 0 15px #ff0000;
 }
 
-.subtitle {
+.subtext {
   text-align: center;
   margin-top: -10px;
-  opacity: 0.7;
+  opacity: 0.8;
+  color: #ff4444;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.logo img {
+  width: 120px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255,204,0,0.4);
 }
 
 .container {
@@ -38,14 +51,8 @@ header {
   background: rgba(255,255,255,0.05);
   padding: 25px;
   border-radius: 20px;
-  backdrop-filter: blur(15px);
-  box-shadow: 0 0 30px rgba(0,255,136,0.2);
-  animation: fadeIn 1s ease;
-}
-
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(20px);}
-  to {opacity: 1; transform: translateY(0);}
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 25px rgba(255,0,0,0.2);
 }
 
 input {
@@ -57,11 +64,10 @@ input {
   background: rgba(255,255,255,0.08);
   color: white;
   outline: none;
-  transition: 0.2s;
 }
 
 input:focus {
-  box-shadow: 0 0 10px #00ff88;
+  box-shadow: 0 0 10px #ffcc00;
 }
 
 button {
@@ -70,7 +76,7 @@ button {
   margin-top: 10px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(90deg, #00ff88, #00c853);
+  background: linear-gradient(90deg, #ffcc00, #ff0000);
   color: black;
   font-weight: bold;
   font-size: 16px;
@@ -80,7 +86,7 @@ button {
 
 button:hover {
   transform: scale(1.03);
-  box-shadow: 0 0 20px #00ff88;
+  box-shadow: 0 0 20px #ffcc00;
 }
 
 #msg {
@@ -89,29 +95,27 @@ button:hover {
   font-weight: bold;
 }
 
-.glow-line {
+.glow {
   height: 2px;
-  background: linear-gradient(90deg, transparent, #00ff88, transparent);
+  background: linear-gradient(90deg, transparent, #ffcc00, #ff0000, transparent);
   margin: 15px 0;
-  animation: glowMove 2s infinite linear;
 }
-
-@keyframes glowMove {
-  from {transform: translateX(-100%);}
-  to {transform: translateX(100%);}
-}
-
 </style>
 </head>
 
 <body>
 
-<header>IRONPULSE GYM</header>
-<div class="subtitle">Book your workout. Build your power.</div>
+<header>GRAMBLING TIGERS WORKOUT PALACE</header>
+<div class="subtext">Train like a Tiger. Build like a Champion.</div>
+
+<div class="logo">
+  <!-- Replace this image if you want a real Grambling logo -->
+  <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3c/Grambling_State_University_logo.svg/512px-Grambling_State_University_logo.svg.png" alt="Grambling Logo">
+</div>
 
 <div class="container">
 
-  <div class="glow-line"></div>
+  <div class="glow"></div>
 
   <input id="email" placeholder="Email">
   <input id="first" placeholder="First Name">
@@ -140,38 +144,21 @@ function book() {
   let msg = document.getElementById("msg");
 
   if (!email || !first || !last || !phone || !date || !time || !trainer) {
-    msg.innerText = "⚠ Fill out all fields";
-    msg.style.color = "orange";
+    msg.innerText = "⚠ Please fill out all fields";
+    msg.style.color = "#ffcc00";
     return;
   }
 
   if (!email.includes("@")) {
     msg.innerText = "⚠ Invalid email";
-    msg.style.color = "red";
+    msg.style.color = "#ff0000";
     return;
   }
 
   if (appointments.some(a => a.first === first && a.last === last)) {
-    msg.innerText = "⚠ Already booked under this name";
-    msg.style.color = "red";
+    msg.innerText = "⚠ Booking already exists for this name";
+    msg.style.color = "#ff0000";
     return;
   }
 
-  if (appointments.some(a => a.date === date && a.time === time && a.trainer === trainer)) {
-    msg.innerText = "⚠ Time slot already taken";
-    msg.style.color = "red";
-    return;
-  }
-
-  appointments.push({ email, first, last, phone, date, time, trainer });
-  localStorage.setItem("appointments", JSON.stringify(appointments));
-
-  msg.innerText = "✅ Workout Booked Successfully!";
-  msg.style.color = "#00ff88";
-
-  document.querySelectorAll("input").forEach(i => i.value = "");
-}
-</script>
-
-</body>
-</html>
+  if (appointments.some(a => a.date
