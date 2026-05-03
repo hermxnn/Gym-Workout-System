@@ -28,21 +28,18 @@ header {
 .subtext {
   text-align: center;
   margin-top: -10px;
-  opacity: 0.8;
+  opacity: 0.9;
   color: #ff4444;
+  font-weight: 500;
+  padding: 0 10px;
 }
 
-.logo {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.logo img {
-  width: 120px;
-  height: auto;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(255,204,0,0.4);
+.tagline {
+  text-align: center;
+  margin-top: 8px;
+  color: #ffcc00;
+  font-style: italic;
+  opacity: 0.9;
 }
 
 .container {
@@ -107,11 +104,7 @@ button:hover {
 
 <header>GRAMBLING TIGERS WORKOUT PALACE</header>
 <div class="subtext">Train like a Tiger. Build like a Champion.</div>
-
-<div class="logo">
-  <!-- Replace this image if you want a real Grambling logo -->
-  <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3c/Grambling_State_University_logo.svg/512px-Grambling_State_University_logo.svg.png" alt="Grambling Logo">
-</div>
+<div class="tagline">Grambling, Where Everybody can be Somebody</div>
 
 <div class="container">
 
@@ -161,4 +154,21 @@ function book() {
     return;
   }
 
-  if (appointments.some(a => a.date
+  if (appointments.some(a => a.date === date && a.time === time && a.trainer === trainer)) {
+    msg.innerText = "⚠ Time slot already taken";
+    msg.style.color = "#ff0000";
+    return;
+  }
+
+  appointments.push({ email, first, last, phone, date, time, trainer });
+  localStorage.setItem("appointments", JSON.stringify(appointments));
+
+  msg.innerText = "🏆 Workout Booked Successfully at Grambling Tigers Palace!";
+  msg.style.color = "#ffcc00";
+
+  document.querySelectorAll("input").forEach(i => i.value = "");
+}
+</script>
+
+</body>
+</html>
