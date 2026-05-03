@@ -17,7 +17,7 @@ body {
 
 header {
   text-align: center;
-  padding: 25px 10px;
+  padding: 20px 10px;
   font-family: 'Anton', sans-serif;
   font-size: 42px;
   letter-spacing: 2px;
@@ -30,8 +30,6 @@ header {
   margin-top: -10px;
   opacity: 0.9;
   color: #ff4444;
-  font-weight: 500;
-  padding: 0 10px;
 }
 
 .tagline {
@@ -39,7 +37,6 @@ header {
   margin-top: 8px;
   color: #ffcc00;
   font-style: italic;
-  opacity: 0.9;
 }
 
 .container {
@@ -60,7 +57,6 @@ input {
   border-radius: 10px;
   background: rgba(255,255,255,0.08);
   color: white;
-  outline: none;
 }
 
 input:focus {
@@ -78,7 +74,6 @@ button {
   font-weight: bold;
   font-size: 16px;
   cursor: pointer;
-  transition: 0.2s;
 }
 
 button:hover {
@@ -97,14 +92,43 @@ button:hover {
   background: linear-gradient(90deg, transparent, #ffcc00, #ff0000, transparent);
   margin: 15px 0;
 }
+
+/* NEW IMAGES */
+.top-image {
+  display: block;
+  margin: 20px auto;
+  width: 180px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(255,204,0,0.4);
+}
+
+.bottom-image {
+  display: block;
+  margin: 25px auto;
+  width: 220px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(255,0,0,0.4);
+}
+
+.icons {
+  text-align: center;
+  font-size: 26px;
+  margin-bottom: 10px;
+}
 </style>
 </head>
 
 <body>
 
 <header>GRAMBLING TIGERS WORKOUT PALACE</header>
+
+<div class="icons">🏋️ 💪 🐅</div>
+
 <div class="subtext">Train like a Tiger. Build like a Champion.</div>
 <div class="tagline">Grambling, Where Everybody can be Somebody</div>
+
+<!-- TOP IMAGE -->
+<img class="top-image" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b" alt="Gym">
 
 <div class="container">
 
@@ -122,6 +146,9 @@ button:hover {
 
   <div id="msg"></div>
 </div>
+
+<!-- BOTTOM IMAGE -->
+<img class="bottom-image" src="https://images.unsplash.com/photo-1558611848-73f7eb4001ab" alt="Workout">
 
 <script>
 let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
@@ -148,8 +175,18 @@ function book() {
     return;
   }
 
-  if (appointments.some(a => a.first === first && a.last === last)) {
-    msg.innerText = "⚠ Booking already exists for this name";
+  if (appointments.some(a => a.email === email || a.phone === phone)) {
+    msg.innerText = "⚠ This email or phone number is already used";
+    msg.style.color = "#ff0000";
+    return;
+  }
+
+  let selectedDate = new Date(date);
+  let minDate = new Date("2026-05-06");
+  let maxDate = new Date("2026-12-31");
+
+  if (selectedDate < minDate || selectedDate > maxDate) {
+    msg.innerText = "⚠ Date must be between May 6, 2026 and Dec 31, 2026";
     msg.style.color = "#ff0000";
     return;
   }
@@ -163,8 +200,13 @@ function book() {
   appointments.push({ email, first, last, phone, date, time, trainer });
   localStorage.setItem("appointments", JSON.stringify(appointments));
 
-  msg.innerText = "🏆 Workout Booked Successfully at Grambling Tigers Palace!";
+  msg.innerText = "🏆 Workout Booked Successfully!";
   msg.style.color = "#ffcc00";
+
+  let subject = "Workout Booking Confirmation";
+  let body = `Hello ${first}, your workout is booked on ${date} at ${time} with ${trainer}.`;
+
+  window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
   document.querySelectorAll("input").forEach(i => i.value = "");
 }
